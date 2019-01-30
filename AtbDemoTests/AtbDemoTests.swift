@@ -38,7 +38,7 @@ class AtbDemoTests: XCTestCase {
             
          user , error in 
             guard let user = user, error == nil else {
-                XCTFail("No data was downloaded. \(error?.localizedDescription)")
+                XCTFail("No data was downloaded. \(error)")
                 return }
             
             print(user.objectId)
