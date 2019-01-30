@@ -19,26 +19,17 @@ class AtbDemoTests: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
 
-    /****
- 
-     curl -X POST \
-     -H "Content-Type: application/json" \
-     -H "X-LC-Id: {{appid}}" \
-     -H "X-LC-Key: {{appkey}}" \
-     -d '{"username":"hjiang","password":"f32@ds*@&dsa"}' \
-     https://api.parse.cn/1.1/login
-     
-     */
+    
     func testUserLogin() {
         
         let expectation = XCTestExpectation(description: "User login")
         
         
-        WebService.userLogin(username: "maodd.ca@gmail.com", password: "123456") {
+        WebService.userLogin(username: "test3@test.com", password: "123456") {
             
          user , error in 
             guard let user = user, error == nil else {
-                XCTFail("No data was downloaded. \(error)")
+                XCTFail("User login failedd. \(error)")
                 return }
             
             print(user.objectId)
@@ -53,6 +44,32 @@ class AtbDemoTests: XCTestCase {
         wait(for: [expectation], timeout: 30.0)
         
     }
+    
+    func testFetchUserAccounts() {
+        
+        let expectation = XCTestExpectation(description: "User accounts")
+        
+        
+        WebService.fetchUserAccounts(userObjectId: "YMJH4RlUyw") {
+            
+            results , error in
+            guard let results = results, error == nil else {
+                XCTFail("Fetch user accounts failedd. \(error)")
+                return }
+            
+            print(results)
+            
+            // Fulfill the expectation to indicate that the background task has finished successfully.
+            expectation.fulfill()
+            
+        }
+        
+        
+        
+        wait(for: [expectation], timeout: 30.0)
+        
+    }
+    
     
     func testFetchCurrentUser() {
         
@@ -127,7 +144,7 @@ class AtbDemoTests: XCTestCase {
             
             do {
                 //create decodable object from data
-                let decodedObject = try JSONDecoder().decode(ParseResponse.self, from: data)
+                let decodedObject = try JSONDecoder().decode(UserAccountQueryResponse.self, from: data)
                 print(decodedObject)
             } catch let error {
                 print("json decoder error, \(error.localizedDescription)")

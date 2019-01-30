@@ -10,6 +10,7 @@ import UIKit
 
 class LoginViewController: UITableViewController {
     @IBOutlet weak var errorMessageLabel: UILabel!
+    @IBOutlet weak var spinner: UIActivityIndicatorView!
     @IBOutlet weak var usernameField: UITextField!
     @IBOutlet weak var passwordField: UITextField!
     
@@ -28,23 +29,17 @@ class LoginViewController: UITableViewController {
                 return
         }
         
-        let spinner = UIActivityIndicatorView(style: .whiteLarge)
-        spinner.center = self.loginButton.center
         spinner.startAnimating()
-        self.loginButton.addSubview(spinner)
         self.loginButton.setTitle("", for: .normal)
         self.loginButton.isEnabled = false
         
         WebService.userLogin(username: username, password: password) { (user, error) in
 
-            DispatchQueue.main.sync {
-                spinner.removeFromSuperview()
-                self.loginButton.setTitle("Login", for: .normal)
-                self.loginButton.isEnabled = true
-            }
+         
             if let error = error {
                 DispatchQueue.main.sync {
                     self.errorMessageLabel.text = error
+                    self.stopSpinner()
                 }
                 return
             }
@@ -59,6 +54,8 @@ class LoginViewController: UITableViewController {
                     self.errorMessageLabel.text = ""
                     self.navigationController?.pushViewController(vc!, animated: true)
                 }
+                
+                
                 
             }
         }
@@ -75,4 +72,16 @@ class LoginViewController: UITableViewController {
     }
     */
 
+    func stopSpinner() {
+        
+        self.spinner.stopAnimating()
+        self.loginButton.setTitle("Login", for: .normal)
+        self.loginButton.isEnabled = true
+    
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        self.stopSpinner()
+    }
 }
